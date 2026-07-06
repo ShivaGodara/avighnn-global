@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Custom Die Development — DWG / DXF / STEP to Production | Avighnn Global</title>
+  <meta name="description" content="Custom aluminium die development from India — DWG / DXF / STEP to die design, sampling, and production. Die correction and first-article approval managed before the run." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip" href="#overview">Skip to content</a>
+
+  <header class="nav solid" id="nav">
+    <div class="nav-inner">
+      <a class="brand" href="index.html" aria-label="Avighnn Global home">
+        <svg viewBox="0 0 40 40" role="img" aria-label="Avighnn Global logo">
+          <circle cx="20" cy="21" r="8.5" fill="none" stroke="#C9A961" stroke-width="1.4"/>
+          <line x1="11.5" y1="21" x2="28.5" y2="21" stroke="#C9A961" stroke-width="1"/>
+          <path d="M11.5 21a8.5 8.5 0 0 1 17 0" fill="none" stroke="#C9A961" stroke-width="1" opacity="0.6"/>
+          <path d="M20 4 L34 32 L6 32 Z" fill="none" stroke="#0B2545" stroke-width="1.8"/>
+          <path d="M20 4 L20 32" stroke="#0B2545" stroke-width="1.2"/>
+        </svg>
+        <span class="brand-name">Avighnn Global</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="products.html" class="active">Products</a>
+        <a href="process.html">Process</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <a class="btn btn-outline nav-cta" href="contact.html">Request Quote</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="products.html">Products</a><a href="process.html">Process</a><a href="about.html">About</a><a href="contact.html">Contact</a>
+    <a class="btn btn-gold" href="contact.html">Request a Quote →</a>
+  </div>
+
+  <main>
+    <section class="detail-hero">
+      <div class="detail-hero-grid">
+        <div>
+          <nav class="breadcrumb" aria-label="Breadcrumb" data-reveal>
+            <a href="index.html">Home</a><span class="sep">/</span><a href="products.html">Products</a><span class="sep">/</span><span>Custom dies</span>
+          </nav>
+          <span class="eyebrow" data-reveal style="--d:60ms">03 / Custom die development</span>
+          <h1 class="h1" data-reveal style="--d:120ms">Your <span class="it-gold">drawing</span>, extruded.</h1>
+          <p class="lede" data-reveal style="--d:200ms">
+            Send a cross-section as DWG, DXF, or STEP. We handle die design, extrusion
+            simulation, sampling, and correction — then move to production once the
+            first article is approved. New tooling or a proven existing die.
+          </p>
+          <div class="hero-cta" data-reveal style="--d:280ms">
+            <a class="btn btn-gold" href="contact.html">Send a Drawing <span class="arw">→</span></a>
+            <a class="link-underline on-dark-btn" href="#flow">The die flow <span class="arw">→</span></a>
+          </div>
+        </div>
+        <div data-reveal style="--d:200ms">
+          <div class="blueprint" id="blueprint" aria-hidden="true">
+            <span class="bp-corner tl"></span><span class="bp-corner tr"></span><span class="bp-corner bl"></span><span class="bp-corner br"></span>
+            <span class="bp-tag a">Custom §</span><span class="bp-tag b">DXF ref</span><span class="bp-tag c">Scale 1:1</span><span class="bp-tag d">Rev. 04 / 2026</span>
+            <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
+              <defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0 H0 V20" fill="none" stroke="#C9A961" stroke-width="0.5" opacity="0.08"/></pattern></defs>
+              <rect width="400" height="400" fill="url(#grid)"/>
+              <g fill="none" stroke="#C9A961" stroke-width="1.6" stroke-linejoin="miter">
+                <!-- irregular custom profile -->
+                <path class="draw" style="--len:900" d="M120 150 H210 V120 H250 L280 150 V210 H240 V250 L200 280 H150 V220 H120 Z"/>
+                <!-- inner detail cavity -->
+                <path class="draw" style="--len:300" d="M150 175 H195 V210 H165 V245 H150 Z"/>
+                <!-- snap-fit hook -->
+                <path class="draw" style="--len:120" d="M250 150 H272 V166 H258" />
+                <!-- screw boss -->
+                <circle class="draw" style="--len:50" cx="218" cy="230" r="8"/>
+              </g>
+              <g class="bp-dims" font-family="'JetBrains Mono', monospace" font-size="11" fill="#C9A961">
+                <line x1="120" y1="98" x2="280" y2="98" stroke="#C9A961" stroke-width="0.75"/><line x1="120" y1="92" x2="120" y2="104" stroke="#C9A961" stroke-width="0.75"/><line x1="280" y1="92" x2="280" y2="104" stroke="#C9A961" stroke-width="0.75"/>
+                <rect x="182" y="88" width="36" height="15" fill="#061529"/><text x="200" y="99" text-anchor="middle">R — ref</text>
+                <text x="120" y="315" text-anchor="start">CCD ≤ 200</text>
+                <text x="250" y="315" text-anchor="start">t 2.0–3.0</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIE FLOW -->
+    <section class="section" id="flow" aria-labelledby="flow-h2">
+      <div class="wrap">
+        <div class="head-center">
+          <span class="eyebrow center" data-reveal>The die flow</span>
+          <h2 class="h2" data-reveal style="--d:80ms; margin-top:1.1rem" id="flow-h2">Drawing to <span class="it-gold">production</span>, in five moves.</h2>
+        </div>
+        <div class="track" style="grid-template-columns:repeat(5,1fr)">
+          <div class="step" data-reveal><div class="node"><span>01</span></div><div class="step-label">Review</div><p class="step-note">Feasibility &amp; extrudability check on your file.</p></div>
+          <div class="step" data-reveal style="--d:80ms"><div class="node"><span>02</span></div><div class="step-label">Die design</div><p class="step-note">Tooling designed and flow-simulated.</p></div>
+          <div class="step" data-reveal style="--d:160ms"><div class="node"><span>03</span></div><div class="step-label">Sampling</div><p class="step-note">Trial extrusion from the new die.</p></div>
+          <div class="step" data-reveal style="--d:240ms"><div class="node"><span>04</span></div><div class="step-label">Correction</div><p class="step-note">Die tuned to hit tolerances.</p></div>
+          <div class="step" data-reveal style="--d:320ms"><div class="node"><span>05</span></div><div class="step-label">Production</div><p class="step-note">Run on first-article approval.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section bg-navy-deep on-dark" id="specs" aria-labelledby="spec-h2">
+      <div class="wrap">
+        <div class="sec-head">
+          <div data-reveal><span class="eyebrow">Tooling</span><h2 class="h2" id="spec-h2">What the die stage <span class="it-gold">covers</span>.</h2></div>
+          <p class="lede" data-reveal style="--d:100ms">Lead times depend on section complexity and press size. We confirm die cost, sampling window, and MOQ in the quote.</p>
+        </div>
+        <div class="table-scroll" data-reveal>
+          <table class="spec-table">
+            <caption>Custom die — parameters</caption>
+            <thead><tr><th>Parameter</th><th>Range</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><th>File formats</th><td class="mono">DWG / DXF / STEP / IGES / PDF</td><td>Dimensioned drawing preferred</td></tr>
+              <tr><th>Circumscribing circle</th><td class="mono">up to ~250 mm</td><td>Press-dependent</td></tr>
+              <tr><th>Wall thickness</th><td class="mono">from ~1.2 mm</td><td>Aspect-ratio limited</td></tr>
+              <tr><th>Alloy / temper</th><td class="mono">6060 / 6063 / 6061 / 6082</td><td>Matched to application</td></tr>
+              <tr><th>Sampling</th><td class="mono">trial + correction</td><td>First-article report</td></tr>
+              <tr><th>Tolerance</th><td class="mono">EN 12020 / ASTM B221</td><td>Or to drawing</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="send-h2">
+      <div class="wrap two-col">
+        <div data-reveal>
+          <span class="eyebrow">Before you quote</span>
+          <h2 class="h2" id="send-h2" style="margin:1.1rem 0 1.2rem">What to <span class="it-gold">send us</span></h2>
+          <p class="lede">A dimensioned cross-section is all we need to start. We'll flag anything that fights the extrusion process before you commit to tooling.</p>
+          <div style="margin-top:2rem"><a class="btn btn-navy" href="contact.html">Send a drawing <span class="arw">→</span></a></div>
+        </div>
+        <div data-reveal style="--d:100ms">
+          <div class="feat-list">
+            <div class="feat-item"><span class="fi-mark">◇</span><div class="fi-body"><h4>Cross-section file</h4><p>DWG / DXF / STEP / IGES, or a fully dimensioned PDF sketch.</p></div></div>
+            <div class="feat-item"><span class="fi-mark">◇</span><div class="fi-body"><h4>Critical dimensions &amp; tolerances</h4><p>Which features are functional and where tolerance matters.</p></div></div>
+            <div class="feat-item"><span class="fi-mark">◇</span><div class="fi-body"><h4>Alloy, temper &amp; finish</h4><p>Or the application, so we can recommend the spec.</p></div></div>
+            <div class="feat-item"><span class="fi-mark">◇</span><div class="fi-body"><h4>Annual volume &amp; port</h4><p>Expected quantity to size the die and the destination port.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta-band" aria-labelledby="cta-h2">
+      <div class="wrap">
+        <span class="eyebrow center" data-reveal>Request a quote</span>
+        <h2 class="h2" id="cta-h2" data-reveal style="--d:80ms">Send the drawing. <span class="it-gold">We'll price the die in 48 hours.</span></h2>
+        <div class="row" data-reveal style="--d:160ms">
+          <a class="btn btn-gold" href="contact.html">Send a Drawing <span class="arw">→</span></a>
+          <a class="link-underline on-dark-btn" href="products.html">All products <span class="arw">→</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand"><div class="fname">Avighnn Global</div><p>Precision aluminium profiles and extrusions, exported from Meerut, India to buyers worldwide.</p></div>
+      <div><h4>Contact</h4><ul><li><a href="#" class="placeholder">[email placeholder]</a></li><li><a href="#" class="placeholder">[phone placeholder]</a></li><li><a href="#" class="placeholder">[WhatsApp placeholder]</a></li></ul></div>
+      <div><h4>Address</h4><address><span class="placeholder">[street placeholder]</span><br />Meerut, Uttar Pradesh, India<br /><span class="placeholder">[PIN]</span></address></div>
+      <div><h4>Explore</h4><ul><li><a href="products.html">Products</a></li><li><a href="process.html">Process</a></li><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><span>© <span data-year>2026</span> Avighnn Global</span><span>Precision in every profile</span></div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
