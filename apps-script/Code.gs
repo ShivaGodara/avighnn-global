@@ -65,6 +65,21 @@ function doGet() {
   return json({ ok: true, service: 'avighnn-global-inquiries' });
 }
 
+/**
+ * Diagnostic. Run this from the Apps Script editor (Run > whereAmI) and read
+ * the execution log to see which spreadsheet and tab rows are actually going
+ * to — rows land in the SHEET_NAME tab of the *bound* spreadsheet, which is
+ * not always the tab you have open.
+ */
+function whereAmI() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = getSheet();
+  console.log('Spreadsheet: ' + ss.getName());
+  console.log('URL:         ' + ss.getUrl());
+  console.log('Tab:         ' + sheet.getName());
+  console.log('Rows:        ' + sheet.getLastRow() + ' (1 is the header)');
+}
+
 /* ---- sheet -------------------------------------------------- */
 
 function appendRow(data) {
