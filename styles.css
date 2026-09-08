@@ -794,3 +794,102 @@ select:focus-visible, textarea:focus-visible {
   .hero-cta { gap: 1.25rem; }
   .brand-name { font-size: 1.1rem; }
 }
+
+/* ============================================================
+   SPLASH
+   Shown once per session, on whichever page the visitor lands on —
+   never again on internal navigation. The overlay only renders when
+   <html> carries .splash-on, a class set by a small inline script in
+   the head, so with JS disabled it never appears at all and can never
+   strand the page behind a curtain.
+   ============================================================ */
+.splash { display: none; }
+.splash-on { overflow: hidden; }          /* hold the scroll while it plays */
+.splash-on .splash {
+  display: flex; position: fixed; inset: 0; z-index: 400;
+  align-items: center; justify-content: center;
+  background: var(--paper);               /* same ground as the page: no colour jump */
+  transition: opacity .55s ease;
+}
+.splash-sheet { position: relative; width: min(320px, 62vw); text-align: center; }
+
+.splash-corner {
+  position: absolute; width: 16px; height: 16px; border: 1px solid var(--gold);
+  opacity: 0; transition: opacity .5s ease;
+}
+.splash-corner.tl { top: -30px; left: -30px; border-right: 0; border-bottom: 0; }
+.splash-corner.tr { top: -30px; right: -30px; border-left: 0; border-bottom: 0; }
+.splash-corner.bl { bottom: -30px; left: -30px; border-right: 0; border-top: 0; }
+.splash-corner.br { bottom: -30px; right: -30px; border-left: 0; border-top: 0; }
+
+/* the mark is uncovered by a retracting shutter with a gold die line
+   running ahead of it — the same motion the product cards use */
+.splash-mark { position: relative; width: 180px; height: 180px; margin: 0 auto; }
+.splash-mark img { width: 180px; height: 180px; }
+.splash-mark::before {
+  content: ""; position: absolute; inset: 0; z-index: 2;
+  background: var(--paper); transform-origin: bottom;
+}
+.splash-mark::after {
+  content: ""; position: absolute; inset: 0; z-index: 3; opacity: 0;
+  background: linear-gradient(to bottom, var(--gold) 0 1.5px, transparent 1.5px);
+}
+
+.splash-rule {
+  height: 1px; background: var(--gold); margin: 1.5rem auto 0;
+  transform: scaleX(0); transform-origin: left;
+}
+.splash-cap {
+  margin-top: .9rem; font-family: var(--mono); font-size: .62rem;
+  letter-spacing: .22em; text-transform: uppercase; color: var(--gold-ink);
+  opacity: 0; transition: opacity .5s ease;
+}
+
+.splash.splash-go .splash-corner { opacity: 1; }
+.splash.splash-go .splash-mark::before {
+  transform: scaleY(0);
+  transition: transform .9s cubic-bezier(.22,.61,.36,1) .15s;
+}
+.splash.splash-go .splash-mark::after {
+  animation: dieline .9s cubic-bezier(.22,.61,.36,1) .15s both;
+}
+.splash.splash-go .splash-rule {
+  transform: scaleX(1);
+  transition: transform .85s cubic-bezier(.22,.61,.36,1) .4s;
+}
+.splash.splash-go .splash-cap { opacity: 1; transition-delay: .95s; }
+
+/* Keeps rendering through the fade even after .splash-on is dropped
+   from <html>, so the scroll unlocks the moment the exit begins. */
+.splash.splash-out {
+  display: flex; opacity: 0; pointer-events: none;
+}
+.splash.splash-out .splash-sheet {
+  transform: scale(1.04); transition: transform .55s ease;
+}
+
+@media (max-width: 600px) {
+  .splash-sheet { width: min(260px, 70vw); }
+  .splash-mark, .splash-mark img { width: 140px; height: 140px; }
+  .splash-corner.tl, .splash-corner.tr { top: -22px; }
+  .splash-corner.bl, .splash-corner.br { bottom: -22px; }
+  .splash-corner.tl, .splash-corner.bl { left: -22px; }
+  .splash-corner.tr, .splash-corner.br { right: -22px; }
+}
+
+/* ---------- holding the entrance behind the curtain ----------
+   Observers and timers all run normally underneath, so nothing that
+   makes content visible depends on a callback firing after the splash.
+   These rules simply pin the entrance animations at their first frame
+   with no transition; dropping .splash-on from <html> releases them,
+   and the transitions in the base rules then play as the site is
+   uncovered. A one-way CSS release cannot strand the page. */
+.splash-on [data-reveal] {
+  opacity: 0 !important; transform: translateY(20px) !important;
+  transition: none !important;
+}
+.splash-on .draw { animation: none !important; }
+.splash-on .bp-dims { opacity: 0 !important; transition: none !important; }
+.splash-on .track::before { transform: scaleX(0) !important; transition: none !important; }
+.splash-on .sd-seg { transform: scaleY(0) !important; transition: none !important; }
+.splash-on .sd-cap, .splash-on .sd-label { opacity: 0 !important; transition: none !important; }

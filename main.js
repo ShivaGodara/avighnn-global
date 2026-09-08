@@ -1,7 +1,7 @@
 /* ============================================================
    AVIGHNN GLOBAL — shared behaviour
-   Nav scroll state, mobile menu, scroll reveal, blueprint draw,
-   drafting-sheet frame + title block, self-measuring sections,
+   Splash, nav scroll state, mobile menu, scroll reveal, blueprint
+   draw, drafting-sheet frame + title block, self-measuring sections,
    extrusion motion, FAQ accordion, quote form handling.
    ============================================================ */
 (function () {
@@ -49,10 +49,12 @@
     setTimeout(function () { el.classList.add('revealed'); }, delay);
   }
 
-  var revealEls = document.querySelectorAll('[data-reveal]');
-  if (reduce || !('IntersectionObserver' in window)) {
-    revealEls.forEach(function (el) { el.classList.add('in'); markRevealed(el, 0); });
-  } else {
+  (function reveals() {
+    var revealEls = document.querySelectorAll('[data-reveal]');
+    if (reduce || !('IntersectionObserver' in window)) {
+      revealEls.forEach(function (el) { el.classList.add('in'); markRevealed(el, 0); });
+      return;
+    }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (!e.isIntersecting) return;
@@ -62,7 +64,7 @@
       });
     }, { threshold: 0.15 });
     revealEls.forEach(function (el) { io.observe(el); });
-  }
+  })();
 
   /* ============================================================
      DRAFTING SHEET — frame + title block
@@ -123,6 +125,7 @@
     var MIN_WIDTH = 1240;
     var MIN_HEIGHT = 280;
     var dims = [];
+    var watching = false;
 
     function build() {
       if (dims.length || window.innerWidth < MIN_WIDTH) return;
@@ -152,6 +155,8 @@
     }
 
     function watch() {
+      if (watching || !dims.length) return;
+      watching = true;
       if (reduce || !('IntersectionObserver' in window)) {
         dims.forEach(function (d) { d.el.classList.add('in'); });
         return;
@@ -229,27 +234,23 @@
   }
 
   /* ---- Blueprint stroke draw, then let it measure itself ---- */
-  var bp = document.getElementById('blueprint');
-  if (bp) {
-    var runDims = function () {
-      if (reduce) return;
-      bp.querySelectorAll('.bp-dims text').forEach(function (t) { countUp(t, 900); });
-    };
-    if (reduce) {
-      bp.classList.add('go');
-    } else {
-      requestAnimationFrame(function () {
+  (function blueprint() {
+    var bp = document.getElementById("blueprint");
+    if (!bp) return;
+    if (reduce) { bp.classList.add('go'); return; }
+    requestAnimationFrame(function () {
+      setTimeout(function () {
+        bp.classList.add('go');
         setTimeout(function () {
-          bp.classList.add('go');
-          setTimeout(runDims, 1300);           /* matches .bp-dims transition-delay */
-        }, 350);
-      });
-    }
-  }
+          bp.querySelectorAll('.bp-dims text').forEach(function (t) { countUp(t, 900); });
+        }, 1300);                              /* matches .bp-dims transition-delay */
+      }, 350);
+    });
+  })();
 
   /* ---- Stat figures ---- */
   (function statCounters() {
-    var stats = document.querySelector('.stats');
+    var stats = document.querySelector(".stats");
     if (!stats || reduce || !('IntersectionObserver' in window)) return;
     var obs = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
@@ -292,4 +293,63 @@
   document.querySelectorAll('[data-year]').forEach(function (el) {
     el.textContent = new Date().getFullYear();
   });
+
+  /* ============================================================
+     SPLASH
+     The curtain only ever adds and removes a class on <html>. The
+     entrance animations underneath are held by CSS while it is up and
+     released when it drops, so no content depends on a callback that
+     fires late. Three guarantees it never sticks: the mark waits on
+     the logo but only briefly, the exit is scheduled the moment it
+     starts, and a hard cap fires regardless of what else happened.
+     ============================================================ */
+  (function splashScreen() {
+    var el = document.getElementById('splash');
+    var armed = document.documentElement.classList.contains('splash-on');
+
+    /* Reduced motion gets no curtain at all — it is pure decoration. */
+    if (!el || !armed || reduce) {
+      if (el && el.parentNode) el.parentNode.removeChild(el);
+      document.documentElement.classList.remove("splash-on");
+      return;
+    }
+
+    /* Mark the session so internal navigation never sees it again. */
+    try { sessionStorage.setItem('ag_splash', '1'); } catch (e) {}
+
+    var began = false;
+    var finished = false;
+
+    function finish() {
+      if (finished) return;
+      finished = true;
+      el.classList.add('splash-out');
+      /* dropping the class unlocks the scroll and releases the
+         entrance animations held underneath */
+      document.documentElement.classList.remove("splash-on");
+      setTimeout(function () {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }, 700);
+    }
+
+    function begin() {
+      if (began) return;
+      began = true;
+      el.classList.add('splash-go');
+      setTimeout(finish, 1500);
+    }
+
+    /* Hold for the logo so the reveal never wipes over an empty box,
+       but give up quickly if it is slow. */
+    var img = el.querySelector('img');
+    if (img && !img.complete) {
+      img.addEventListener('load', begin);
+      img.addEventListener('error', begin);
+      setTimeout(begin, 900);
+    } else {
+      begin();
+    }
+
+    setTimeout(finish, 4000);
+  })();
 })();
