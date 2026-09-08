@@ -289,7 +289,7 @@
     if (!form) return;
 
     /* Paste the /exec URL of the deployed Apps Script Web App here. */
-    var ENDPOINT = 'https://script.google.com/macros/s/AKfycbw-t_qQcT27p4uDQrkF9jk6wdtfGXRp3p_Fpf_U3vV5IJ44EBjYUHgHWBB-Tklh6jy3/exec';
+    var ENDPOINT = 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnT5s3AusVL0rrCCIZLRInsqwslxJ2CaTLrYALw2KDiTBaQO7A5i7HQ4N_jJ2virZl_ERO10pGYx-LKV0hUqwLRhyjboJ9ED6WLBtNJ8R59lypptRyrzrVWxX_7tN23LN34A7dwe0GcaxvvFnoWygn313xOyZwgWtmRosEFX54mJXKrkN-B-azzJjdY3hUwX4hOzno1JZ9pQ2tCud2-2njnP_cah8jL-m7xHZcO7mdyDaswGUAhwfaVJxp8KJP0GhYMpXeQNAvBT4xDqy5r40RsZgCAl-w&lib=MawMbEhE-zuWPflEikOc8XyMNGS6H3WL4';
 
     var btn = document.getElementById('submitBtn');
     var status = document.getElementById('formStatus');
