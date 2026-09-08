@@ -86,6 +86,12 @@
 
           <!-- RIGHT: FORM -->
           <form class="inquiry-form" id="quoteForm" data-reveal style="--d:100ms" novalidate>
+            <!-- Honeypot: invisible to people, irresistible to bots. -->
+            <div class="hp" aria-hidden="true">
+              <label for="f-website">Website</label>
+              <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
             <div class="form-row">
               <div class="field">
                 <label for="f-name">Full Name <span class="req">*</span></label>
@@ -138,6 +144,8 @@
               <button class="btn btn-navy" type="submit" id="submitBtn">Send Inquiry <span class="arw">→</span></button>
               <span class="form-note">Response within 72 to 96 hours</span>
             </div>
+
+            <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
           </form>
         </div>
       </div>

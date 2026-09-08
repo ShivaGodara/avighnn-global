@@ -275,19 +275,95 @@
     });
   });
 
-  /* ---- Quote form (no redirect) ---- */
-  var form = document.getElementById('quoteForm');
-  if (form) {
+  /* ============================================================
+     QUOTE FORM → GOOGLE SHEET
+     Posted to an Apps Script Web App (see apps-script/Code.gs) as
+     text/plain so the request stays a CORS simple request; Apps
+     Script cannot answer a preflight. If the response cannot be read
+     — an opaque redirect, a blocked reader — the row has still very
+     likely landed, so a second no-cors attempt is made rather than
+     telling the buyer their inquiry was lost.
+     ============================================================ */
+  (function quoteForm() {
+    var form = document.getElementById('quoteForm');
+    if (!form) return;
+
+    /* Paste the /exec URL of the deployed Apps Script Web App here. */
+    var ENDPOINT = 'https://script.google.com/macros/s/AKfycbw-t_qQcT27p4uDQrkF9jk6wdtfGXRp3p_Fpf_U3vV5IJ44EBjYUHgHWBB-Tklh6jy3/exec';
+
     var btn = document.getElementById('submitBtn');
-    form.addEventListener('submit', function (ev) {
-      ev.preventDefault();
-      if (!form.checkValidity()) { form.reportValidity(); return; }
+    var status = document.getElementById('formStatus');
+    var idle = btn.innerHTML;
+    var sending = false;
+
+    function say(msg, kind) {
+      if (!status) return;
+      status.textContent = msg;
+      status.className = 'form-status' + (kind ? ' is-' + kind : '');
+    }
+
+    function payload() {
+      var data = {};
+      new FormData(form).forEach(function (v, k) { data[k] = v; });
+      data.page = location.pathname;
+      data.referrer = document.referrer;
+      data.userAgent = navigator.userAgent;
+      return JSON.stringify(data);
+    }
+
+    function succeed() {
       btn.classList.add('sent');
       btn.innerHTML = "Sent — we'll be in touch";
+      say('Thank you. Your inquiry is with our team — expect a priced quote within 72 to 96 hours.', 'ok');
+      form.reset();
+    }
+
+    function fail(msg) {
+      sending = false;
+      btn.disabled = false;
+      btn.innerHTML = idle;
+      say(msg || 'Something went wrong. Please email aviiral@avighnnglobal.com and we will pick it up from there.', 'err');
+    }
+
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      if (sending) return;
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+
+      if (!ENDPOINT) {                       /* not yet configured */
+        fail('The form is not connected yet. Please email aviiral@avighnnglobal.com.');
+        return;
+      }
+
+      sending = true;
       btn.disabled = true;
-      /* NOTE: wire this to an endpoint / email service before launch. */
+      btn.innerHTML = 'Sending…';
+      say('Sending your specifications…', 'busy');
+
+      var body = payload();
+
+      fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: body
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (res) {
+          if (res && res.ok) succeed();
+          else fail(res && res.error);
+        })
+        .catch(function () {
+          /* Response unreadable. Resend opaquely so the row lands even
+             if this browser will not let us confirm it. */
+          fetch(ENDPOINT, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: body
+          }).then(succeed, function () { fail(); });
+        });
     });
-  }
+  })();
 
   /* ---- Year in footer ---- */
   document.querySelectorAll('[data-year]').forEach(function (el) {

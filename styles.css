@@ -566,6 +566,19 @@ select:focus-visible, textarea:focus-visible {
 .form-actions { display: flex; align-items: center; gap: 1.5rem; margin-top: .5rem; flex-wrap: wrap; }
 .form-note { font-family: var(--mono); font-size: .7rem; letter-spacing: .08em; color: var(--gray); }
 
+/* Honeypot — off-screen rather than display:none, which some bots skip. */
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.form-status {
+  margin: 1.4rem 0 0; padding-left: 1rem; border-left: 2px solid var(--hair-strong);
+  font-size: .92rem; line-height: 1.6; color: var(--gray);
+}
+.form-status:empty { display: none; }
+.form-status.is-ok { border-left-color: var(--gold); color: var(--navy); }
+.form-status.is-err { border-left-color: #A32B26; color: #8C231F; }
+.btn-navy:disabled { cursor: default; opacity: .75; }
+.btn-navy.sent:disabled { opacity: 1; }
+
 /* ============================================================
    FAQ ACCORDION
    ============================================================ */
