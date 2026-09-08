@@ -1,7 +1,8 @@
 /* ============================================================
    AVIGHNN GLOBAL — shared behaviour
    Nav scroll state, mobile menu, scroll reveal, blueprint draw,
-   FAQ accordion, quote form handling.
+   drafting-sheet frame + title block, self-measuring sections,
+   extrusion motion, FAQ accordion, quote form handling.
    ============================================================ */
 (function () {
   'use strict';
@@ -39,24 +40,229 @@
   }
 
   /* ---- Scroll reveal ---- */
+  /* Product cards are uncovered by a retracting shutter. Once that has
+     had time to play, the shutter is taken out of rendering: a stalled
+     transition must never be able to leave a card covered. */
+  function markRevealed(el, delay) {
+    if (!el.classList.contains('prod-card')) return;
+    if (!delay) { el.classList.add('revealed'); return; }
+    setTimeout(function () { el.classList.add('revealed'); }, delay);
+  }
+
   var revealEls = document.querySelectorAll('[data-reveal]');
   if (reduce || !('IntersectionObserver' in window)) {
-    revealEls.forEach(function (el) { el.classList.add('in'); });
+    revealEls.forEach(function (el) { el.classList.add('in'); markRevealed(el, 0); });
   } else {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        if (!e.isIntersecting) return;
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+        markRevealed(e.target, 1400);
       });
     }, { threshold: 0.15 });
     revealEls.forEach(function (el) { io.observe(el); });
   }
 
-  /* ---- Blueprint stroke draw ---- */
+  /* ============================================================
+     DRAFTING SHEET — frame + title block
+     Both are decorative chrome, so both are aria-hidden and
+     pointer-events: none. The title block reads its sheet number
+     and name off <body data-sheet data-sheet-title>.
+     ============================================================ */
+  (function buildSheet() {
+    var frame = document.createElement('div');
+    frame.className = 'sheet';
+    frame.setAttribute('aria-hidden', 'true');
+    ['tl', 'tr', 'bl', 'br'].forEach(function (pos) {
+      var tick = document.createElement('span');
+      tick.className = 'sheet-corner ' + pos;
+      frame.appendChild(tick);
+    });
+    document.body.appendChild(frame);
+
+    var sheetNo = document.body.getAttribute('data-sheet');
+    var sheetTitle = document.body.getAttribute('data-sheet-title');
+    if (!sheetNo || !sheetTitle) return;
+
+    var tb = document.createElement('aside');
+    tb.className = 'title-block';
+    tb.setAttribute('aria-hidden', 'true');
+    tb.innerHTML =
+      '<div class="tb-row">' +
+        '<div class="tb-org">Avighnn Global</div>' +
+        '<div class="tb-title"></div>' +
+      '</div>' +
+      '<div class="tb-row tb-meta">' +
+        '<span class="tb-sheet"></span><span class="sep">&middot;</span>' +
+        '<span>Scale 1:1</span><span class="sep">&middot;</span>' +
+        '<span class="tb-rev"></span>' +
+      '</div>';
+    tb.querySelector('.tb-title').textContent = sheetTitle;
+    tb.querySelector('.tb-sheet').textContent = 'Sheet ' + sheetNo;
+    tb.querySelector('.tb-rev').textContent = 'Rev 04 / ' + new Date().getFullYear();
+    document.body.appendChild(tb);
+
+    /* Stand the title block down over the footer, where it would
+       otherwise sit on top of the contact details. */
+    var footer = document.querySelector('.footer');
+    if (footer && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { tb.classList.toggle('tb-out', e.isIntersecting); });
+      }, { threshold: 0 }).observe(footer);
+    }
+  })();
+
+  /* ============================================================
+     SECTIONS THAT MEASURE THEMSELVES
+     A broken dimension line down the left gutter of each band,
+     labelled with the band's real rendered height. Only built when
+     there is gutter to hold it (>= 1240px, matching the CSS).
+     ============================================================ */
+  (function buildDims() {
+    var MIN_WIDTH = 1240;
+    var MIN_HEIGHT = 280;
+    var dims = [];
+
+    function build() {
+      if (dims.length || window.innerWidth < MIN_WIDTH) return;
+      var bands = document.querySelectorAll('.hero, .page-hero, .detail-hero, .section');
+      bands.forEach(function (band) {
+        if (band.offsetHeight < MIN_HEIGHT) return;
+        var dim = document.createElement('span');
+        dim.className = 'sec-dim';
+        dim.setAttribute('aria-hidden', 'true');
+        dim.innerHTML =
+          '<i class="sd-seg top"></i><i class="sd-seg bot"></i>' +
+          '<i class="sd-cap top"></i><i class="sd-cap bot"></i>' +
+          '<b class="sd-label"></b>';
+        band.appendChild(dim);
+        dims.push({ band: band, el: dim, label: dim.querySelector('.sd-label') });
+      });
+      measure();
+      watch();
+    }
+
+    /* Heights shift once webfonts land and on every resize, so the
+       label is re-read rather than captured once. */
+    function measure() {
+      dims.forEach(function (d) {
+        d.label.textContent = d.band.offsetHeight.toFixed(1);
+      });
+    }
+
+    function watch() {
+      if (reduce || !('IntersectionObserver' in window)) {
+        dims.forEach(function (d) { d.el.classList.add('in'); });
+        return;
+      }
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+        });
+      }, { rootMargin: '0px 0px -8% 0px' });
+      dims.forEach(function (d) { obs.observe(d.el); });
+    }
+
+    build();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    window.addEventListener('load', function () { build(); measure(); });
+
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () { build(); measure(); }, 180);
+    }, { passive: true });
+  })();
+
+  /* ---- Process track: draw the connector left to right ---- */
+  (function trackLine() {
+    var tracks = document.querySelectorAll('.track');
+    if (!tracks.length) return;
+    if (reduce || !('IntersectionObserver' in window)) {
+      tracks.forEach(function (t) { t.classList.add('line-in'); });
+      return;
+    }
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('line-in'); obs.unobserve(e.target); }
+      });
+    }, { threshold: 0.2 });
+    tracks.forEach(function (t) { obs.observe(t); });
+  })();
+
+  /* ============================================================
+     COUNTING NUMBERS
+     Dimensions and stats tick up to their value instead of fading,
+     so a drawing appears to take its own measurements.
+     ============================================================ */
+  var NUMERIC = /^([^\d]{0,3})(\d+(?:\.\d+)?)$/;
+
+  function countUp(el, dur) {
+    var match = NUMERIC.exec((el.textContent || '').trim());
+    if (!match) return;                        /* leave "R — ref", "ISO 9001" alone */
+    var prefix = match[1];
+    var target = parseFloat(match[2]);
+    var dot = match[2].indexOf('.');
+    var places = dot === -1 ? 0 : match[2].length - dot - 1;
+    var final = prefix + target.toFixed(places);
+    var start = null;
+    var done = false;
+
+    function settle() {
+      done = true;
+      el.textContent = final;
+    }
+
+    function frame(now) {
+      if (done) return;
+      if (start === null) start = now;
+      var p = Math.min(1, (now - start) / dur);
+      if (p >= 1) { settle(); return; }
+      el.textContent = prefix + (target * (1 - Math.pow(1 - p, 3))).toFixed(places);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    /* A number is content, not decoration: if the frame loop is
+       throttled or never advances, land on the real value anyway. */
+    setTimeout(settle, dur + 120);
+  }
+
+  /* ---- Blueprint stroke draw, then let it measure itself ---- */
   var bp = document.getElementById('blueprint');
   if (bp) {
-    if (reduce) { bp.classList.add('go'); }
-    else { requestAnimationFrame(function () { setTimeout(function () { bp.classList.add('go'); }, 350); }); }
+    var runDims = function () {
+      if (reduce) return;
+      bp.querySelectorAll('.bp-dims text').forEach(function (t) { countUp(t, 900); });
+    };
+    if (reduce) {
+      bp.classList.add('go');
+    } else {
+      requestAnimationFrame(function () {
+        setTimeout(function () {
+          bp.classList.add('go');
+          setTimeout(runDims, 1300);           /* matches .bp-dims transition-delay */
+        }, 350);
+      });
+    }
   }
+
+  /* ---- Stat figures ---- */
+  (function statCounters() {
+    var stats = document.querySelector('.stats');
+    if (!stats || reduce || !('IntersectionObserver' in window)) return;
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        obs.unobserve(e.target);
+        e.target.querySelectorAll('.stat-num').forEach(function (n) {
+          /* only pure figures — "ISO 9001" and "72–96h" stay put */
+          if (/^[\d.]+$/.test((n.textContent || '').trim())) countUp(n, 1100);
+        });
+      });
+    }, { threshold: 0.4 });
+    obs.observe(stats);
+  })();
 
   /* ---- FAQ accordion ---- */
   document.querySelectorAll('.faq-q').forEach(function (q) {
