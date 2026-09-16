@@ -1,0 +1,33 @@
+# ============================================================
+# cPanel Git Version Control — deployment tasks
+#
+# EDIT ONE LINE BEFORE DEPLOYING: replace USERNAME below with your
+# cPanel account username. You can see it in cPanel's right-hand
+# sidebar under "General Information", or run `whoami` in Terminal.
+#
+# This file makes the "Deploy HEAD Commit" button appear in cPanel's
+# Git Version Control screen. It copies the repository into the Node
+# application root, leaving node_modules and .env in place.
+#
+# NOT NEEDED if you clone the repository directly into the Node app
+# root — in that case "Update from Remote" already puts the files
+# where they belong, and you can delete this file. Using it with a
+# wrong DEPLOYPATH is worse than not having it, so if you are unsure
+# which setup you have, delete it and pull directly instead.
+#
+# After any deploy, press Restart on the Node.js app. Passenger does
+# not pick up new code on its own.
+# ============================================================
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/USERNAME/avighnn-global/
+    - /bin/mkdir -p $DEPLOYPATH
+    # Copy the working tree across, but never clobber the installed
+    # dependencies or the server's own environment file.
+    - >-
+      /usr/bin/rsync -a --delete
+      --exclude 'node_modules/'
+      --exclude '.env'
+      --exclude '.git/'
+      ./ $DEPLOYPATH

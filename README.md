@@ -73,13 +73,21 @@ here already matches what it expects.
 1. **Push this repo to GitHub** (already done if you are reading this there).
 
 2. **Get the files onto the server.** In cPanel either:
-   - *Git Version Control* → Create → paste the repo URL → deploy; or
+   - *Git Version Control* → Create → paste the repo URL → set the directory to
+     `avighnn-global` → Create. This clones straight into the app root, so
+     "Update from Remote" is all you need later; or
    - upload a zip of the repo (without `node_modules/`) via *File Manager* and
      extract it.
 
    Put it somewhere **outside** `public_html`, e.g. `/home/USER/avighnn-global`.
    Passenger serves through its own mapping; files in `public_html` would be
    exposed directly and bypass the server.
+
+   **About `.cpanel.yml`:** it is in the repo so cPanel's "Deploy HEAD Commit"
+   button works, and it has a `USERNAME` placeholder you must replace with your
+   cPanel username. If you cloned directly into the app root as above, you do not
+   need it — delete it rather than leave the placeholder in, since a wrong
+   `DEPLOYPATH` copies your app somewhere it will never run from.
 
 3. **cPanel → Setup Node.js App → Create Application:**
 

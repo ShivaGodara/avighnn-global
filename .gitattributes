@@ -1,0 +1,13 @@
+# Normalise line endings. The repo stores LF; Windows checkouts get CRLF
+# locally, and the Linux server always receives LF — which matters for
+# app.js, since a CRLF shebang or startup file can confuse Passenger.
+* text=auto eol=lf
+
+# Never touch binaries.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.ico  binary
+*.woff  binary
+*.woff2 binary
