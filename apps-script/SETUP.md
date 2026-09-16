@@ -35,14 +35,18 @@ To check it: open that URL in a browser. It should print
 
 ## 4. Point the site at it
 
-In [`main.js`](../main.js), in the `quoteForm` block, paste the URL:
+The browser no longer calls Apps Script directly — it posts to `/api/quote`
+on our own server, which validates the payload and forwards it. So the URL
+goes in the server environment, not in the page script:
 
-```js
-var ENDPOINT = 'https://script.google.com/macros/s/AKfy…/exec';
+```sh
+# .env, or the cPanel "Environment variables" panel
+QUOTE_ENDPOINT=https://script.google.com/macros/s/AKfy…/exec
 ```
 
-Until that is filled in, the form tells the visitor to email us instead of
-silently pretending to send.
+Until that is set, the form tells the visitor to email us instead of silently
+pretending to send. Confirm it is picked up with `curl /healthz` — the
+response reports `quoteEndpointConfigured`.
 
 ## 5. Test
 

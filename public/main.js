@@ -288,8 +288,10 @@
     var form = document.getElementById('quoteForm');
     if (!form) return;
 
-    /* Paste the /exec URL of the deployed Apps Script Web App here. */
-    var ENDPOINT = 'https://script.google.com/macros/s/AKfycbw-t_qQcT27p4uDQrkF9jk6wdtfGXRp3p_Fpf_U3vV5IJ44EBjYUHgHWBB-Tklh6jy3/exec';
+    /* Same-origin endpoint on our own server. It validates the payload
+       and forwards it to the inquiry sheet, so the Apps Script URL is
+       no longer published here. */
+    var ENDPOINT = '/api/quote';
 
     var btn = document.getElementById('submitBtn');
     var status = document.getElementById('formStatus');
@@ -342,26 +344,21 @@
 
       var body = payload();
 
+      /* Same origin, so the response is always readable — no opaque
+         retry is needed and a failure here is a real failure. */
       fetch(ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        headers: { 'Content-Type': 'application/json' },
         body: body
       })
-        .then(function (res) { return res.json(); })
+        .then(function (res) {
+          return res.json().catch(function () { return null; });
+        })
         .then(function (res) {
           if (res && res.ok) succeed();
           else fail(res && res.error);
         })
-        .catch(function () {
-          /* Response unreadable. Resend opaquely so the row lands even
-             if this browser will not let us confirm it. */
-          fetch(ENDPOINT, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: body
-          }).then(succeed, function () { fail(); });
-        });
+        .catch(function () { fail(); });
     });
   })();
 
